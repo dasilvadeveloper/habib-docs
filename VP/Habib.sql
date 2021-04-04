@@ -1,0 +1,82 @@
+CREATE TABLE `User` (
+  ID       int(10) NOT NULL AUTO_INCREMENT, 
+  Username varchar(20) NOT NULL, 
+  Image    text, 
+  Name     varchar(30) NOT NULL, 
+  Surname  varchar(30) NOT NULL, 
+  BornDate date NOT NULL, 
+  Phone    int(15), 
+  Password varchar(20) NOT NULL, 
+  PRIMARY KEY (ID)) CHARACTER SET UTF8;
+CREATE TABLE UserType (
+  ID   int(10) NOT NULL AUTO_INCREMENT, 
+  Type varchar(14) NOT NULL, 
+  PRIMARY KEY (ID)) CHARACTER SET UTF8;
+CREATE TABLE Profile (
+  UserID     int(10) NOT NULL, 
+  UserTypeID int(10) NOT NULL, 
+  `Date`     datetime NOT NULL, 
+  PRIMARY KEY (UserID, 
+  UserTypeID)) CHARACTER SET UTF8;
+CREATE TABLE Follow (
+  UserFollowerID int(10) NOT NULL, 
+  UserFollowedID int(10) NOT NULL, 
+  `Date`         datetime NOT NULL, 
+  PRIMARY KEY (UserFollowerID, 
+  UserFollowedID)) CHARACTER SET UTF8;
+CREATE TABLE Report (
+  UserReportingID int(10) NOT NULL, 
+  UserReportedID  int(10) NOT NULL, 
+  ReportTypeId    int(11) NOT NULL, 
+  `Date`          date NOT NULL, 
+  PRIMARY KEY (UserReportingID, 
+  UserReportedID, 
+  ReportTypeId)) CHARACTER SET UTF8;
+CREATE TABLE ReportType (
+  ID   int(11) NOT NULL AUTO_INCREMENT, 
+  Type varchar(75) NOT NULL, 
+  PRIMARY KEY (ID)) CHARACTER SET UTF8;
+CREATE TABLE Post (
+  ID     int(11) NOT NULL AUTO_INCREMENT, 
+  UserID int(10) NOT NULL, 
+  `Date` date NOT NULL, 
+  PRIMARY KEY (ID)) CHARACTER SET UTF8;
+CREATE TABLE Comment (
+  PostID      int(11) NOT NULL, 
+  UserID      int(10) NOT NULL, 
+  `Date`      datetime NOT NULL, 
+  Description varchar(255) NOT NULL, 
+  PRIMARY KEY (PostID, 
+  UserID)) CHARACTER SET UTF8;
+CREATE TABLE Attachment (
+  ID     int(11) NOT NULL AUTO_INCREMENT, 
+  PostID int(11) NOT NULL, 
+  Image  text NOT NULL, 
+  PRIMARY KEY (ID)) CHARACTER SET UTF8;
+CREATE TABLE `Like` (
+  UserID int(10) NOT NULL, 
+  PostID int(11) NOT NULL, 
+  `Date` date NOT NULL, 
+  PRIMARY KEY (UserID, 
+  PostID)) CHARACTER SET UTF8;
+CREATE TABLE Preferences (
+  ID         int(11) NOT NULL, 
+  UserID     int(10) NOT NULL, 
+  Descriptor varchar(40) NOT NULL, 
+  Param      varchar(40) NOT NULL, 
+  PRIMARY KEY (ID, 
+  UserID)) CHARACTER SET UTF8;
+ALTER TABLE Profile ADD CONSTRAINT FKProfile288309 FOREIGN KEY (UserID) REFERENCES `User` (ID);
+ALTER TABLE Profile ADD CONSTRAINT FKProfile217766 FOREIGN KEY (UserTypeID) REFERENCES UserType (ID);
+ALTER TABLE Follow ADD CONSTRAINT Segue FOREIGN KEY (UserFollowerID) REFERENCES `User` (ID);
+ALTER TABLE Follow ADD CONSTRAINT FKFollow511508 FOREIGN KEY (UserFollowedID) REFERENCES `User` (ID);
+ALTER TABLE Report ADD CONSTRAINT Report FOREIGN KEY (UserReportingID) REFERENCES `User` (ID);
+ALTER TABLE Report ADD CONSTRAINT FKReport626704 FOREIGN KEY (UserReportedID) REFERENCES `User` (ID);
+ALTER TABLE Report ADD CONSTRAINT Ser FOREIGN KEY (ReportTypeId) REFERENCES ReportType (ID);
+ALTER TABLE Post ADD CONSTRAINT Fazer FOREIGN KEY (UserID) REFERENCES `User` (ID);
+ALTER TABLE Comment ADD CONSTRAINT FKComment963907 FOREIGN KEY (PostID) REFERENCES Post (ID);
+ALTER TABLE Comment ADD CONSTRAINT FKComment537260 FOREIGN KEY (UserID) REFERENCES `User` (ID);
+ALTER TABLE Attachment ADD CONSTRAINT FKAttachment126929 FOREIGN KEY (PostID) REFERENCES Post (ID);
+ALTER TABLE `Like` ADD CONSTRAINT FKLike148752 FOREIGN KEY (UserID) REFERENCES `User` (ID);
+ALTER TABLE `Like` ADD CONSTRAINT FKLike722104 FOREIGN KEY (PostID) REFERENCES Post (ID);
+ALTER TABLE Preferences ADD CONSTRAINT FKPreference216216 FOREIGN KEY (UserID) REFERENCES `User` (ID);
