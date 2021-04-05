@@ -1,10 +1,7 @@
 ALTER TABLE Profile DROP FOREIGN KEY FKProfile288309;
 ALTER TABLE Profile DROP FOREIGN KEY FKProfile217766;
-ALTER TABLE Follow DROP FOREIGN KEY Segue;
+ALTER TABLE Follow DROP FOREIGN KEY FKFollow998978;
 ALTER TABLE Follow DROP FOREIGN KEY FKFollow511508;
-ALTER TABLE Report DROP FOREIGN KEY Report;
-ALTER TABLE Report DROP FOREIGN KEY FKReport626704;
-ALTER TABLE Report DROP FOREIGN KEY Ser;
 ALTER TABLE Post DROP FOREIGN KEY Fazer;
 ALTER TABLE Comment DROP FOREIGN KEY FKComment963907;
 ALTER TABLE Comment DROP FOREIGN KEY FKComment537260;
@@ -12,93 +9,99 @@ ALTER TABLE Attachment DROP FOREIGN KEY FKAttachment126929;
 ALTER TABLE `Like` DROP FOREIGN KEY FKLike148752;
 ALTER TABLE `Like` DROP FOREIGN KEY FKLike722104;
 ALTER TABLE Preferences DROP FOREIGN KEY FKPreference216216;
+ALTER TABLE Report DROP FOREIGN KEY FKReport798166;
+ALTER TABLE Report DROP FOREIGN KEY FKReport224814;
+ALTER TABLE Report DROP FOREIGN KEY FKReport882533;
+ALTER TABLE `User` DROP FOREIGN KEY FKUser786595;
 DROP TABLE IF EXISTS `User`;
 DROP TABLE IF EXISTS UserType;
 DROP TABLE IF EXISTS Profile;
 DROP TABLE IF EXISTS Follow;
-DROP TABLE IF EXISTS Report;
 DROP TABLE IF EXISTS ReportType;
 DROP TABLE IF EXISTS Post;
 DROP TABLE IF EXISTS Comment;
 DROP TABLE IF EXISTS Attachment;
 DROP TABLE IF EXISTS `Like`;
 DROP TABLE IF EXISTS Preferences;
+DROP TABLE IF EXISTS Report;
+DROP TABLE IF EXISTS Country;
 CREATE TABLE `User` (
-  ID       int(10) NOT NULL AUTO_INCREMENT, 
-  Username varchar(20) NOT NULL, 
-  Image    text, 
-  Name     varchar(30) NOT NULL, 
-  Surname  varchar(30) NOT NULL, 
-  BornDate date NOT NULL, 
-  Phone    int(15), 
-  Password varchar(20) NOT NULL, 
+  ID        int(10) NOT NULL AUTO_INCREMENT, 
+  CountryID int(10) NOT NULL, 
+  Username  varchar(20) NOT NULL, 
+  Image     text, 
+  Name      varchar(40) NOT NULL, 
+  Surname   varchar(40) NOT NULL, 
+  BornDate  date NOT NULL, 
+  Phone     int(9), 
+  Password  varchar(30) NOT NULL, 
   PRIMARY KEY (ID)) CHARACTER SET UTF8;
 CREATE TABLE UserType (
   ID   int(10) NOT NULL AUTO_INCREMENT, 
-  Type varchar(14) NOT NULL, 
+  Type varchar(20) NOT NULL, 
   PRIMARY KEY (ID)) CHARACTER SET UTF8;
 CREATE TABLE Profile (
-  UserID     int(10) NOT NULL, 
   UserTypeID int(10) NOT NULL, 
-  `Date`     datetime NOT NULL, 
-  PRIMARY KEY (UserID, 
-  UserTypeID)) CHARACTER SET UTF8;
+  UserID     int(10) NOT NULL, 
+  `Date`     date NOT NULL, 
+  PRIMARY KEY (UserTypeID, 
+  UserID)) CHARACTER SET UTF8;
 CREATE TABLE Follow (
-  UserFollowerID int(10) NOT NULL, 
   UserFollowedID int(10) NOT NULL, 
-  `Date`         datetime NOT NULL, 
-  PRIMARY KEY (UserFollowerID, 
-  UserFollowedID)) CHARACTER SET UTF8;
-CREATE TABLE Report (
-  UserReportingID int(10) NOT NULL, 
-  UserReportedID  int(10) NOT NULL, 
-  ReportTypeId    int(11) NOT NULL, 
-  `Date`          date NOT NULL, 
-  PRIMARY KEY (UserReportingID, 
-  UserReportedID, 
-  ReportTypeId)) CHARACTER SET UTF8;
+  Follower       int(10) NOT NULL, 
+  `Date`         date NOT NULL, 
+  PRIMARY KEY (UserFollowedID, 
+  Follower)) CHARACTER SET UTF8;
 CREATE TABLE ReportType (
-  ID   int(11) NOT NULL AUTO_INCREMENT, 
-  Type varchar(75) NOT NULL, 
+  ID          int(10) NOT NULL AUTO_INCREMENT, 
+  Description varchar(40) NOT NULL, 
   PRIMARY KEY (ID)) CHARACTER SET UTF8;
 CREATE TABLE Post (
-  ID          int(11) NOT NULL AUTO_INCREMENT, 
+  ID          int(10) NOT NULL AUTO_INCREMENT, 
   UserID      int(10) NOT NULL, 
   `Date`      date NOT NULL, 
   Description text NOT NULL, 
   PRIMARY KEY (ID)) CHARACTER SET UTF8;
 CREATE TABLE Comment (
-  PostID      int(11) NOT NULL, 
+  ID          int(10) NOT NULL AUTO_INCREMENT, 
   UserID      int(10) NOT NULL, 
+  PostID      int(10) NOT NULL, 
   `Date`      datetime NOT NULL, 
   Description varchar(255) NOT NULL, 
-  PRIMARY KEY (PostID, 
-  UserID)) CHARACTER SET UTF8;
+  PRIMARY KEY (ID)) CHARACTER SET UTF8;
 CREATE TABLE Attachment (
-  ID     int(11) NOT NULL AUTO_INCREMENT, 
-  PostID int(11) NOT NULL, 
-  Image  text NOT NULL, 
+  ID     int(10) NOT NULL AUTO_INCREMENT, 
+  PostID int(10) NOT NULL, 
+  Image  varchar(255) NOT NULL, 
   PRIMARY KEY (ID)) CHARACTER SET UTF8;
 CREATE TABLE `Like` (
+  PostID int(10) NOT NULL, 
   UserID int(10) NOT NULL, 
-  PostID int(11) NOT NULL, 
   `Date` date NOT NULL, 
-  PRIMARY KEY (UserID, 
-  PostID)) CHARACTER SET UTF8;
+  PRIMARY KEY (PostID, 
+  UserID)) CHARACTER SET UTF8;
 CREATE TABLE Preferences (
-  ID         int(11) NOT NULL, 
+  ID         int(10) NOT NULL, 
   UserID     int(10) NOT NULL, 
-  Descriptor varchar(40) NOT NULL, 
-  Param      varchar(40) NOT NULL, 
+  Descriptor varchar(50) NOT NULL, 
+  Param      varchar(50) NOT NULL, 
   PRIMARY KEY (ID, 
   UserID)) CHARACTER SET UTF8;
+CREATE TABLE Report (
+  PostID       int(10) NOT NULL, 
+  UserID       int(10) NOT NULL, 
+  ReportTypeID int(10) NOT NULL, 
+  `Date`       date NOT NULL, 
+  PRIMARY KEY (PostID, 
+  UserID)) CHARACTER SET UTF8;
+CREATE TABLE Country (
+  ID          int(10) NOT NULL AUTO_INCREMENT, 
+  Description varchar(25) NOT NULL, 
+  PRIMARY KEY (ID)) CHARACTER SET UTF8;
 ALTER TABLE Profile ADD CONSTRAINT FKProfile288309 FOREIGN KEY (UserID) REFERENCES `User` (ID);
 ALTER TABLE Profile ADD CONSTRAINT FKProfile217766 FOREIGN KEY (UserTypeID) REFERENCES UserType (ID);
-ALTER TABLE Follow ADD CONSTRAINT Segue FOREIGN KEY (UserFollowerID) REFERENCES `User` (ID);
+ALTER TABLE Follow ADD CONSTRAINT FKFollow998978 FOREIGN KEY (Follower) REFERENCES `User` (ID);
 ALTER TABLE Follow ADD CONSTRAINT FKFollow511508 FOREIGN KEY (UserFollowedID) REFERENCES `User` (ID);
-ALTER TABLE Report ADD CONSTRAINT Report FOREIGN KEY (UserReportingID) REFERENCES `User` (ID);
-ALTER TABLE Report ADD CONSTRAINT FKReport626704 FOREIGN KEY (UserReportedID) REFERENCES `User` (ID);
-ALTER TABLE Report ADD CONSTRAINT Ser FOREIGN KEY (ReportTypeId) REFERENCES ReportType (ID);
 ALTER TABLE Post ADD CONSTRAINT Fazer FOREIGN KEY (UserID) REFERENCES `User` (ID);
 ALTER TABLE Comment ADD CONSTRAINT FKComment963907 FOREIGN KEY (PostID) REFERENCES Post (ID);
 ALTER TABLE Comment ADD CONSTRAINT FKComment537260 FOREIGN KEY (UserID) REFERENCES `User` (ID);
@@ -106,3 +109,7 @@ ALTER TABLE Attachment ADD CONSTRAINT FKAttachment126929 FOREIGN KEY (PostID) RE
 ALTER TABLE `Like` ADD CONSTRAINT FKLike148752 FOREIGN KEY (UserID) REFERENCES `User` (ID);
 ALTER TABLE `Like` ADD CONSTRAINT FKLike722104 FOREIGN KEY (PostID) REFERENCES Post (ID);
 ALTER TABLE Preferences ADD CONSTRAINT FKPreference216216 FOREIGN KEY (UserID) REFERENCES `User` (ID);
+ALTER TABLE Report ADD CONSTRAINT FKReport798166 FOREIGN KEY (UserID) REFERENCES `User` (ID);
+ALTER TABLE Report ADD CONSTRAINT FKReport224814 FOREIGN KEY (PostID) REFERENCES Post (ID);
+ALTER TABLE Report ADD CONSTRAINT FKReport882533 FOREIGN KEY (ReportTypeID) REFERENCES ReportType (ID);
+ALTER TABLE `User` ADD CONSTRAINT FKUser786595 FOREIGN KEY (CountryID) REFERENCES Country (ID);
